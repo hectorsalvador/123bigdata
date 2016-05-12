@@ -15,6 +15,24 @@ EVENTS = {
         'mindate': datetime(2014,9,9,20,0,0),
         'maxdate': datetime(2014,9,10,1,0,0)
         }
+    'madonna':
+        {
+        'minlat': 40.669665,
+        'maxlat': 40.676865,
+        'minlng': -73.97979,
+        'maxlng': -73.97259,
+        'mindate': datetime(2014,8,9,12,0,0),
+        'maxdate': datetime(2014,8,9,20,0,0)
+        }
+    'beyonce':
+        {
+        'minlat': 40.679665,
+        'maxlat': 40.686865,
+        'minlng': -73.97979,
+        'maxlng': -73.97259,
+        'mindate': datetime(2014,9,1,8,0,0),
+        'maxdate': datetime(2014,9,1,12,0,0)
+        }
 
 }
 

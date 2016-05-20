@@ -12,9 +12,6 @@ ARTISTS = ['lady%20gaga', 'drake', 'alicia%20keys', 'lil%20wayne', 'chris%20brow
 	'the%20black%20eyed%20peas','blake%20shelton', 'kenny%20chesney', 'tim%20mcgraw','ariana%20grande']
 
 
-
-
-
 def go():
 	artist_dict = get_ids_lastfm()
 	return get_events(artist_dict)

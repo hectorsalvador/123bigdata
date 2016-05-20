@@ -2,6 +2,7 @@ from mrjob.job import MRJob
 from mrjob.step import MRStep
 from datetime import datetime
 
+
 UBER_DATE_COL = 0
 UBER_LAT_COL = 1
 UBER_LNG_COL = 2
@@ -82,5 +83,11 @@ class MRGetTripsDuringEvent(MRJob):
         yield(event, sum(counts))
 
 if __name__ == '__main__':
-
     MRGetTripsDuringEvent.run()
+
+# 6:00-7:00 provision of EC2 capacity
+# 9:00 finished configuring cluster software. Started bootstrap.
+# 11:50 finished bootstrapping.
+# ~20:00 finished running. Terminating clusters.
+# 22:30 print results
+# 24:00 Finished. 

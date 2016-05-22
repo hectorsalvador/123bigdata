@@ -1,4 +1,4 @@
-venue,mbid,lat,id,long,datetime,artist
+venue,mbid,lat,id,lon,datetime,artist
 Nokia Theatre Times Square,,40.757423,3173772,-73.986023,2009-12-15T19:00:00,chris%20brown
 Manhattan Center Hammerstein Ballroom,,40.752664,6379580,-73.994309,2013-04-16T19:00:00,chris%20brown
 Barclays Center,,40.683265,6913972,-73.97619,2013-09-22T19:00:00,chris%20brown

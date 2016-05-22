@@ -14,7 +14,9 @@ Taxi rides
 - Data was uploaded to an S3 bucket: s3://hectorsalvador-spr16-cs123-uchicago-edu/yellow
 
 ### 1. Counting taxi rides by event
-- We counted how many taxi rides occurred in a three-hour frame since the beginning of each event (as marked by the API)
+- We counted how many taxi rides occurred in a three-hour frame since the beginning of each event (as marked by the API). Running one month file with 20 instances on AWS takes about 24 minutes (e.g. using python3 ~/…/map_taxi_events.py -r emr s3://…/yellow_tripdata_2013-03.csv )
+
+### 2. Comparing taxi demand before and after Uber started operations in NYC
 
 ## Task B: Destination likelihood
 
@@ -27,6 +29,9 @@ Taxi rides
 - We used the same information as the previous task.
 
 ### 1. Clustering with K-Means
+- For each year (2009-2015), identify a set of cluster centroids (start with K=10) for taxi Pickup and Drop-off locations during three time categories: Weekday daytime, weekday nighttime, and weekends. We only look at trips that start and end within Manhattan. 
 
 ### 2. Trip probability
+- For each trip starting and ending in Manhattan, determine to which pickup and drop-off cluster does it belong. Reduce on pickup locations and break this down into 30 minute increments. We then calculate the probability (as a relative frequency) of going to any given drop off cluster at that time from that starting region. 
+- Look at how the probability of different destinations changes throughout the day from different starting points (e.g. “If I’m in Times Square at midnight, where am I likely to go?” versus “If I’m in Times Square at 7pm…?” How is this different on a weekend versus a weekday?
 

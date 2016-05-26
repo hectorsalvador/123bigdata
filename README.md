@@ -6,7 +6,7 @@
 
 Concerts
 - We obtained a database of 325 concerts in NYC, ranging from 2009 to 2015, using the Bandsintown API: http://www.bandsintown.com/api/overview
-- We used “get_bands.py” to get the information in a csv format and turned it into a json file for further access from “events.json” 
+- We used “get_bands.py” to get the information in a csv format and turned it into 6 json files, classified by year, with names bands_YY.json” 
 
 Taxi rides
 - We downloaded two types of data: uber rides and yellow cab rides.

@@ -97,7 +97,8 @@ class MRKMeansChooseInitialCentroids(MRJob):
     def get_coordinates(self, _, line):
         l = line.split(',')
         #if (l[0] != 'vendor_id'):
-        if (l[0] != 'vendor_id') and (len(l) == 18):
+        # print l
+        if l[0] != 'VendorID' and (l[0] != 'vendor_id') and l[TAXI_P_LAT] != 'pickup_latitude':
             # print l
             if self.options.triptype == "pickup":
                 time = l[TAXI_PICKUP_TIME]
@@ -128,8 +129,8 @@ class MRKMeansChooseInitialCentroids(MRJob):
                     in_time_window = True
             # print "Time window: %s" % in_time_window
             if in_time_window and point_in_Manhattan(lat1, lng1) and point_in_Manhattan(lat2, lng2):
-                print "In Time window and manhattan"
-                print "Time %s, Point [%f,%f]" % (time,lat1,lng1)
+                # print "In Time window and manhattan"
+                # print "Time %s, Point [%f,%f]" % (time,lat1,lng1)
             # if lat >= 40.477399 and lat <= 40.917577:
             #     if lng >= -74.25909 and lng <=-73.700009:
                 yield None, [lat1, lng1]

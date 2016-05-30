@@ -102,8 +102,8 @@ class MRKMeansUpdateCentroids(MRJob):
     def assign_cluster(self, _, line):
 
         l = line.split(',')
-        if (l[0] != 'vendor_id') and (len(l) == 18):
-        #if (l[0] != 'vendor_id'):
+        # if (l[0] != 'vendor_id') and (len(l) == 18):
+        if l[0] != 'VendorID' and (l[0] != 'vendor_id') and l[TAXI_P_LAT] != 'pickup_latitude':            
             # print l
             if self.options.triptype == "pickup":
                 time = l[TAXI_PICKUP_TIME]

@@ -4,7 +4,7 @@ from datetime import datetime
 
 def go():
 
-	f = open('bands.csv', 'r')
+	f = open('sorted_bands.csv', 'r')
 	reader = csv.DictReader(f)
 	d = {}
 
@@ -15,7 +15,7 @@ def go():
 		d[name]['date'] = row['datetime']
 		year = datetime.strptime(row['datetime'], '%Y-%m-%dT%H:%M:%S').year
 
-	with open('bands.json'.format(year), 'w') as fp:
+	with open('sorted_bands.json'.format(year), 'w') as fp:
 		json.dump(d, fp)
 
 

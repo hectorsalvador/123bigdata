@@ -15,7 +15,7 @@ def go():
 		d[name]['date'] = row['datetime']
 		year = datetime.strptime(row['datetime'], '%Y-%m-%dT%H:%M:%S').year
 
-	with open('bands_{}.json'.format(year), 'w') as fp:
+	with open('bands.json'.format(year), 'w') as fp:
 		json.dump(d, fp)
 
 

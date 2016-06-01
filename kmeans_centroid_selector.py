@@ -96,44 +96,10 @@ class MRKMeansChooseInitialCentroids(MRJob):
 
     def get_coordinates(self, _, line):
         l = line.split(',')
-        #if (l[0] != 'vendor_id'):
-        # print l
-        if l[0] != 'VendorID' and (l[0] != 'vendor_id') and l[TAXI_P_LAT] != 'pickup_latitude':
-            # print l
-            if self.options.triptype == "pickup":
-                time = l[TAXI_PICKUP_TIME]
-                lat1=float(l[TAXI_P_LAT])
-                lng1=float(l[TAXI_P_LNG])
-                lat2=float(l[TAXI_D_LAT])
-                lng2=float(l[TAXI_D_LNG])
-            else:
-                time = l[TAXI_DROPOFF_TIME]
-                lat1=float(l[TAXI_D_LAT])
-                lng1=float(l[TAXI_D_LNG])
-                lat2=float(l[TAXI_P_LAT])
-                lng2=float(l[TAXI_P_LNG])
-            date = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
-            #check time
-            in_time_window = False
-            weekday = datetime.weekday(date)
-            if self.options.time == "weekday":
-                if weekday < 6:
-                    if date.hour > 6 and date.hour < 18:
-                        in_time_window = True
-            if self.options.time == "weeknight":
-                if weekday < 6:
-                    if date.hour <= 6 or date.hour >= 18:
-                        in_time_window = True
-            if self.options.time == "weekend":
-                if weekday >= 6:
-                    in_time_window = True
-            # print "Time window: %s" % in_time_window
-            if in_time_window and point_in_Manhattan(lat1, lng1) and point_in_Manhattan(lat2, lng2):
-                # print "In Time window and manhattan"
-                # print "Time %s, Point [%f,%f]" % (time,lat1,lng1)
-            # if lat >= 40.477399 and lat <= 40.917577:
-            #     if lng >= -74.25909 and lng <=-73.700009:
-                yield None, [lat1, lng1]
+        lat1 = float(l[0])
+        lng1= float(l[1])
+
+        yield None, [lat1, lng1]
 
     def find_ranges(self, _, points):
         minp = maxp = numpy.array(points.next())

@@ -24,6 +24,8 @@ TAXI_P_LNG = 5
 TAXI_P_LAT = 6
 TAXI_D_LNG = 9
 TAXI_D_LAT = 10
+CENTROIDS_FILE="/tmp/emr.kmeans.centroids"
+
 
 poly_Manhattan = Polygon([
         (40.700292, -74.010773),
@@ -280,10 +282,50 @@ def get_biggest_diff(centroids,new_centroids):
     max_d = max(distances)
     return max_d
 
-CENTROIDS_FILE="/tmp/emr.kmeans.centroids"
+
+def go(args):
+
+    args1 = args
+    args1.append("--time")
+    args1.append(t)
+    args1.append("--triptype")
+    args1.append(p)
+    print "Starting clusters for %s %s" % (t,p)
+    print args1
+    choose_centroids_job = MRKMeansChooseInitialCentroids(args=args1)
+    print "GOt here"
+    with choose_centroids_job.make_runner() as choose_centroids_runner:
+        choose_centroids_runner.run()
+
+        centroids = extract_centroids(choose_centroids_job, choose_centroids_runner)
+        write_centroids_to_disk(centroids, CENTROIDS_FILE)
+
+        i = 1
+        while True:
+            print "Iteration #%i" % i
+            update_centroids_job = MRKMeansUpdateCentroids(args=args1 + ['--centroids='+CENTROIDS_FILE])
+            with update_centroids_job.make_runner() as update_centroids_runner:
+                update_centroids_runner.run()
+
+                new_centroids = extract_centroids(update_centroids_job, update_centroids_runner)
+                write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
+
+                diff = get_biggest_diff(centroids, new_centroids)
+
+                if diff > 10.0:
+                    centroids = new_centroids
+                else:
+                    output_file = "test_" + str(t) + str(p) + ".txt"
+                    print "saving to %s" % output_file
+
+                    write_centroids_to_disk(centroids, output_file)
+                    break
+
+                i+=1
+
 
 if __name__ == '__main__':
-    args = sys.argv[1:3]
+    args = sys.argv[1:]
     print args
     # times = ["weekend"]
     # pickup_dropoff = ["pickup"]
@@ -291,39 +333,41 @@ if __name__ == '__main__':
     pickup_dropoff = ["pickup", "dropoff"]
     for t in times:
         for p in pickup_dropoff:
-            args = sys.argv[1:]
-            args.append("--time")
-            args.append(t)
-            args.append("--triptype")
-            args.append(p)
-            print "Starting clusters for %s %s" % (t,p)
+            go(args)
+            # args1 = args
+            # args1.append("--time")
+            # args1.append(t)
+            # args.append("--triptype")
+            # args.append(p)
+            # print "Starting clusters for %s %s" % (t,p)
+            # print args
+            # choose_centroids_job = MRKMeansChooseInitialCentroids(args=args)
+            # print "GOt here"
+            # with choose_centroids_job.make_runner() as choose_centroids_runner:
+            #     choose_centroids_runner.run()
 
-            choose_centroids_job = MRKMeansChooseInitialCentroids(args=args)
-            with choose_centroids_job.make_runner() as choose_centroids_runner:
-                choose_centroids_runner.run()
+            #     centroids = extract_centroids(choose_centroids_job, choose_centroids_runner)
+            #     write_centroids_to_disk(centroids, CENTROIDS_FILE)
 
-                centroids = extract_centroids(choose_centroids_job, choose_centroids_runner)
-                write_centroids_to_disk(centroids, CENTROIDS_FILE)
+            #     i = 1
+            #     while True:
+            #         print "Iteration #%i" % i
+            #         update_centroids_job = MRKMeansUpdateCentroids(args=args + ['--centroids='+CENTROIDS_FILE])
+            #         with update_centroids_job.make_runner() as update_centroids_runner:
+            #             update_centroids_runner.run()
 
-                i = 1
-                while True:
-                    print "Iteration #%i" % i
-                    update_centroids_job = MRKMeansUpdateCentroids(args=args + ['--centroids='+CENTROIDS_FILE])
-                    with update_centroids_job.make_runner() as update_centroids_runner:
-                        update_centroids_runner.run()
+            #             new_centroids = extract_centroids(update_centroids_job, update_centroids_runner)
+            #             write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
 
-                        new_centroids = extract_centroids(update_centroids_job, update_centroids_runner)
-                        write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
+            #             diff = get_biggest_diff(centroids, new_centroids)
 
-                        diff = get_biggest_diff(centroids, new_centroids)
+            #             if diff > 10.0:
+            #                 centroids = new_centroids
+            #             else:
+            #                 output_file = "test_" + str(t) + str(p) + ".txt"
+            #                 print "saving to %s" % output_file
 
-                        if diff > 10.0:
-                            centroids = new_centroids
-                        else:
-                            output_file = "test_" + str(t) + str(p) + ".txt"
-                            print "saving to %s" % output_file
+            #                 write_centroids_to_disk(centroids, output_file)
+            #                 break
 
-                            write_centroids_to_disk(centroids, output_file)
-                            break
-
-                        i+=1
+            #             i+=1

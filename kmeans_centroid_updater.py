@@ -7,7 +7,6 @@ import random
 import numpy
 import pickle
 from planar import Polygon
-#from in_manhattan import point_in_Manhattan
 from datetime import datetime
 
 from mrjob.job import MRJob
@@ -94,6 +93,7 @@ class MRKMeansUpdateCentroids(MRJob):
             '--triptype', type='str', help='pickup or droppoff ')
 
     def get_centroids(self):
+        # print "Getting centroids"
         f = open(self.options.centroids)
         centroids = pickle.load(f)
         f.close()
@@ -102,47 +102,16 @@ class MRKMeansUpdateCentroids(MRJob):
     def assign_cluster(self, _, line):
 
         l = line.split(',')
-        # if (l[0] != 'vendor_id') and (len(l) == 18):
-        if l[0] != 'VendorID' and (l[0] != 'vendor_id') and l[TAXI_P_LAT] != 'pickup_latitude':            
-            # print l
-            if self.options.triptype == "pickup":
-                time = l[TAXI_PICKUP_TIME]
-                lat1=float(l[TAXI_P_LAT])
-                lng1=float(l[TAXI_P_LNG])
-                lat2=float(l[TAXI_D_LAT])
-                lng2=float(l[TAXI_D_LNG])
-            else:
-                time = l[TAXI_DROPOFF_TIME]
-                lat1=float(l[TAXI_D_LAT])
-                lng1=float(l[TAXI_D_LNG])
-                lat2=float(l[TAXI_P_LAT])
-                lng2=float(l[TAXI_P_LNG])
-            date = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
-            #check time
-            in_time_window = False
-            weekday = datetime.weekday(date)
-            if self.options.time == "weekday":
-                if weekday < 6:
-                    if date.hour > 6 and date.hour < 18:
-                        in_time_window = True
-            if self.options.time == "weeknight":
-                if weekday < 6:
-                    if date.hour <= 6 or date.hour >= 18:
-                        in_time_window = True
-            if self.options.time == "weekend":
-                if weekday >= 6:
-                    in_time_window = True
-
-            if in_time_window and point_in_Manhattan(lat1, lng1) and point_in_Manhattan(lat2, lng2):
-
-
-                    point = numpy.array([lat1,lng1])
-                    centroids = self.get_centroids()
-                    
-                    distances = [numpy.linalg.norm(point - c) for c in centroids]
-                    cluster = numpy.argmin(distances)
-
-                    yield float(cluster), point.tolist()
+        lat1 = float(l[0])
+        lng1= float(l[1])
+        # print lat1, lng1
+        point = numpy.array([lat1,lng1])
+        centroids = self.get_centroids()
+        
+        distances = [numpy.linalg.norm(point - c) for c in centroids]
+        cluster = numpy.argmin(distances)
+        # print cluster, point.tolist()
+        yield float(cluster), point.tolist()
 
     def partial_sum(self, cluster, points):
         s = numpy.array(points.next())

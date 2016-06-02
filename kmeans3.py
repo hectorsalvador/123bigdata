@@ -272,8 +272,36 @@ class MRKMeansUpdateCentroids(MRJob):
         return [self.mr(mapper=self.assign_cluster,
                         combiner=self.partial_sum,
                         reducer=self.compute_average)]
-# def choose_initial():
-#     MRKMeansChooseInitialCentroids.run()
+        
+def choose_initial(args):
+    choose_centroids_job = MRKMeansChooseInitialCentroids(args=args)
+    with choose_centroids_job.make_runner() as choose_centroids_runner:
+        choose_centroids_runner.run()
+
+        centroids = extract_centroids(choose_centroids_job, choose_centroids_runner)
+        write_centroids_to_disk(centroids, CENTROIDS_FILE)
+        i = 1
+        while True:
+            print "Iteration #%i" % i
+            update_centroids_job = MRKMeansUpdateCentroids(args=args + ['--centroids='+CENTROIDS_FILE])
+            with update_centroids_job.make_runner() as update_centroids_runner:
+                update_centroids_runner.run()
+
+                new_centroids = extract_centroids(update_centroids_job, update_centroids_runner)
+                write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
+
+                diff = get_biggest_diff(centroids, new_centroids)
+
+                if diff > 10.0:
+                    centroids = new_centroids
+                else:
+                    output_file = "test_" + str(t) + str(p) + ".txt"
+                    print "saving to %s" % output_file
+
+                    write_centroids_to_disk(centroids, output_file)
+                    break
+
+                i+=1
 
 if __name__ == '__main__':
     args = sys.argv[1:]
@@ -291,32 +319,33 @@ if __name__ == '__main__':
             args.append(p)
             print "Starting clusters for %s %s" % (t,p)
 
-            choose_centroids_job = MRKMeansChooseInitialCentroids(args=args)
-            with choose_centroids_job.make_runner() as choose_centroids_runner:
-                choose_centroids_runner.run()
+            choose_initial(args)
+            # choose_centroids_job = MRKMeansChooseInitialCentroids(args=args)
+            # with choose_centroids_job.make_runner() as choose_centroids_runner:
+            #     choose_centroids_runner.run()
 
-                centroids = extract_centroids(choose_centroids_job, choose_centroids_runner)
-                write_centroids_to_disk(centroids, CENTROIDS_FILE)
+            #     centroids = extract_centroids(choose_centroids_job, choose_centroids_runner)
+            #     write_centroids_to_disk(centroids, CENTROIDS_FILE)
 
-                i = 1
-                while True:
-                    print "Iteration #%i" % i
-                    update_centroids_job = MRKMeansUpdateCentroids(args=args + ['--centroids='+CENTROIDS_FILE])
-                    with update_centroids_job.make_runner() as update_centroids_runner:
-                        update_centroids_runner.run()
+                # i = 1
+                # while True:
+                #     print "Iteration #%i" % i
+                #     update_centroids_job = MRKMeansUpdateCentroids(args=args + ['--centroids='+CENTROIDS_FILE])
+                #     with update_centroids_job.make_runner() as update_centroids_runner:
+                #         update_centroids_runner.run()
 
-                        new_centroids = extract_centroids(update_centroids_job, update_centroids_runner)
-                        write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
+                #         new_centroids = extract_centroids(update_centroids_job, update_centroids_runner)
+                #         write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
 
-                        diff = get_biggest_diff(centroids, new_centroids)
+                #         diff = get_biggest_diff(centroids, new_centroids)
 
-                        if diff > 10.0:
-                            centroids = new_centroids
-                        else:
-                            output_file = "test_" + str(t) + str(p) + ".txt"
-                            print "saving to %s" % output_file
+                #         if diff > 10.0:
+                #             centroids = new_centroids
+                #         else:
+                #             output_file = "test_" + str(t) + str(p) + ".txt"
+                #             print "saving to %s" % output_file
 
-                            write_centroids_to_disk(centroids, output_file)
-                            break
+                #             write_centroids_to_disk(centroids, output_file)
+                #             break
 
-                        i+=1
+                #         i+=1

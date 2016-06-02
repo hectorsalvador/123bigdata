@@ -6,21 +6,56 @@ import sys
 import random
 import numpy
 import pickle
+import csv
 
 from mrjob.job import MRJob
 from kmeans_centroid_selector import MRKMeansChooseInitialCentroids
 from kmeans_centroid_updater import MRKMeansUpdateCentroids
+from kmeans_filter_points import MRInManhattan
+
+
+CENTROIDS_FILE="/tmp/emr.kmeans.centroids"
+POINTS_FILE = "/tmp/emr.kmeans.points.csv"
+DIR = "output/"
+
+
+def write_output(job, runner, fname):
+    print "strt writing output"
+    with open(fname, "w") as f:
+        writer = csv.writer(f)
+        for line in runner.stream_output():
+            key, value = job.parse_output_line(line)
+            print key,value
+            # r = str(key)+","+str(value)
+            writer.writerow(value)
+    print "wrote out output"
+
+def extract_points(job, runner, fname):
+    # print "writing points"
+
+    with open(fname, "w") as f:
+        writer = csv.writer(f)
+        for line in runner.stream_output():
+            key, value = job.parse_output_line(line)
+            r = str(key)+","+str(value)
+            # print r
+            writer.writerow(value)
+    # print "points are done"
+
+
+# def write_points_to_disk(points,fname):
+#     f = open(fname, "w")
+#     pickle.dump(points, f)
+#     f.close()
 
 def extract_centroids(job, runner):
     c = []
     for line in runner.stream_output():
         key, value = job.parse_output_line(line)
-        print key, value
+        # print key, value
         c.append(value)
     return c
 
-# If we were running on AWS, we would simply write the centroids
-# to an S3 bucket, and then read them from the jobs.
 def write_centroids_to_disk(centroids, fname):
     f = open(fname, "w")
     pickle.dump(centroids, f)
@@ -31,25 +66,34 @@ def get_biggest_diff(centroids,new_centroids):
     max_d = max(distances)
     return max_d
 
-CENTROIDS_FILE="/tmp/emr.kmeans.centroids"
-
 if __name__ == '__main__':
-    args = sys.argv[1:]
-    print args
-    # times = ["weekend"]
-    # pickup_dropoff = ["pickup"]
     times = ["weekday", "weeknight", "weekend"]
-    pickup_dropoff = ["pickup", "dropoff"]
+    pickup_dropoff = ["pickup"]
+    # times = ["weekday"]
+    # pickup_dropoff = ["pickup"]
     for t in times:
         for p in pickup_dropoff:
-            args = sys.argv[1:]
+            args = sys.argv[1:-1]
+            # k = sys.argv[2]
+            init_file = sys.argv[-1]
+            print init_file
             args.append("--time")
             args.append(t)
             args.append("--triptype")
             args.append(p)
+            # args.append(f)
             print "Starting clusters for %s %s" % (t,p)
+            # points_file = str(t)+str(p)+"_pts.csv"
+            # args1 = args.append(init_file)
+            print args+[init_file]
+            filter_points_job = MRInManhattan(args=args+[init_file])
 
-            choose_centroids_job = MRKMeansChooseInitialCentroids(args=args)
+            with filter_points_job.make_runner() as filter_points_runner:
+                filter_points_runner.run()
+
+                extract_points(filter_points_job,filter_points_runner,POINTS_FILE)
+            print "points filtered"
+            choose_centroids_job = MRKMeansChooseInitialCentroids(args=args+[POINTS_FILE])
             with choose_centroids_job.make_runner() as choose_centroids_runner:
                 choose_centroids_runner.run()
 
@@ -59,7 +103,7 @@ if __name__ == '__main__':
                 i = 1
                 while True:
                     print "Iteration #%i" % i
-                    update_centroids_job = MRKMeansUpdateCentroids(args=args + ['--centroids='+CENTROIDS_FILE])
+                    update_centroids_job = MRKMeansUpdateCentroids(args=args + [POINTS_FILE]+['--centroids='+CENTROIDS_FILE])
                     with update_centroids_job.make_runner() as update_centroids_runner:
                         update_centroids_runner.run()
 
@@ -67,14 +111,14 @@ if __name__ == '__main__':
                         write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
 
                         diff = get_biggest_diff(centroids, new_centroids)
-
-                        if diff > 10.0:
+                        print diff
+                        if i < 10:
                             centroids = new_centroids
                         else:
-                            output_file = "test_" + str(t) + str(p) + ".txt"
+                            # output_file = DIR + str(t) + str(p) + ".csv"
+                            output_file = DIR + str(t) + str(p) + "_uber.csv"
                             print "saving to %s" % output_file
-
-                            write_centroids_to_disk(centroids, output_file)
+                            write_output(update_centroids_job,update_centroids_runner,output_file)
                             break
 
                         i+=1

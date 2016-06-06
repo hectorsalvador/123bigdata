@@ -1,11 +1,26 @@
 # 123bigdata
 
+Using MapReduce to analyze Taxi and Uber data from Nyc.
+[Taxi data source](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
+[Uber data source](https://github.com/fivethirtyeight/uber-tlc-foil-response)
+
+## Dependencies:
+- Python 2.7
+- [numpy](http://www.numpy.org/)
+- pickle
+- csv
+- [MrJob](https://pythonhosted.org/mrjob/)
+- [haversine](https://pypi.python.org/pypi/haversine)
+- json
+- [requests](https://pypi.python.org/pypi/requests/2.7.0)
+- datetime
+
 ## Task A: Analyzing taxi demand in big concerts
 
 ### 0. Getting Data 
 
 Concerts
-- We obtained a database of 325 concerts in NYC, ranging from 2009 to 2015, using the Bandsintown API: http://www.bandsintown.com/api/overview
+- We obtained a database of 325 concerts in NYC, ranging from 2009 to 2015, using the [Bandsintown API](http://www.bandsintown.com/api/overview)
 - We manually verified coordinates of several venues, as they had some defaults that did not match any known venue
 - We used “get_bands.py” to get the information in a csv format and turned it into a json file
 
@@ -25,13 +40,14 @@ Taxi rides
 ### 0. Getting Data 
 
 Manhattan
-- We obtained the coordinate points for the polygon for Manhattan from https://gist.github.com/baygross/5430626
+- We obtained the coordinate points for the polygon for Manhattan from [here](https://gist.github.com/baygross/5430626)
 
 Taxi rides
 - We used the same information as the previous task.
 
 ### 1. Clustering with K-Means
 - For each year (2009-2015), identify a set of cluster centroids (start with K=10) for taxi Pickup and Drop-off locations during three time categories: Weekday daytime, weekday nighttime, and weekends. We only look at trips that start and end within Manhattan. 
+- [Kmeans code via uchicago-cs/cmsc12300](https://github.com/uchicago-cs/cmsc12300)
 
 ### 2. Trip probability
 - For each trip starting and ending in Manhattan, determine to which pickup and drop-off cluster does it belong. Reduce on pickup locations and break this down into 30 minute increments. We then calculate the probability (as a relative frequency) of going to any given drop off cluster at that time from that starting region. 

@@ -1,3 +1,15 @@
+### Computer Science with Applications III
+### Analyzing NYC Taxi Data
+### Lauren Dyson, Carlos Grandet, Hector Salvador
+### June 2016
+
+'''
+This file uses MapReduce to count the number of times that taxi rides are made in an area around
+a particular set of coordinates (lat,lon). The file is used both for taxi an uber 
+files, which have different column formats; notice that one should manually uncomment indicated
+code lines to do so.
+'''
+
 from mrjob.job import MRJob
 from mrjob.step import MRStep
 from datetime import datetime, timedelta

@@ -1,3 +1,8 @@
+### Computer Science with Applications III
+### Analyzing NYC Taxi Data
+### Lauren Dyson, Carlos Grandet, Hector Salvador
+### June 2016
+
 import csv
 import json
 from datetime import datetime

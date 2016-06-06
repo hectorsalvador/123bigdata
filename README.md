@@ -28,8 +28,8 @@ Concerts
 
 Taxi rides
 - We downloaded two types of data: uber rides and yellow cab rides.
-- We took advantage of scripts written by github.com/toddwschneider/nyc-taxi-data to download monthly files of yellow cab rides, from 1/2009 to 12/2015. We also obtained monthly uber rides for the period of 4/14-9/14.
-- Data was uploaded to an S3 bucket: s3://hectorsalvador-spr16-cs123-uchicago-edu/yellow
+- We took advantage of [scripts](https://github.com/toddwschneider/nyc-taxi-data) to download monthly files of yellow cab rides, from 1/2009 to 12/2015. We also obtained monthly uber rides for the period of 4/14-9/14.
+- Data was uploaded to an S3 bucket
 
 ### 1. Counting taxi rides by event
 - We counted how many taxi rides occurred in a three-hour frame since the beginning of each event (as marked by the API), at a distance no greater than 200 meters from the venue coordinates. 
@@ -50,7 +50,7 @@ Taxi rides
 
 ### 1. Clustering with K-Means
 - For each year (2009-2015), identify a set of cluster centroids (start with K=10) for taxi Pickup and Drop-off locations during three time categories: Weekday daytime, weekday nighttime, and weekends. We only look at trips that start and end within Manhattan. 
-- [Kmeans code via uchicago-cs/cmsc12300](https://github.com/uchicago-cs/cmsc12300)
+- Kmeans code via [uchicago-cs/cmsc12300](https://github.com/uchicago-cs/cmsc12300)
 
 ### 2. Trip probability
 - For each trip starting and ending in Manhattan, determine to which pickup and drop-off cluster does it belong. Reduce on pickup locations and break this down into 30 minute increments. We then calculate the probability (as a relative frequency) of going to any given drop off cluster at that time from that starting region. 

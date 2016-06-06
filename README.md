@@ -1,4 +1,6 @@
-# 123bigdata
+# Analyzing New York City Taxi Data: a MapReduce approach
+
+Objective: Understand the taxi transportation dynamics for New York City (NYC) and how has it been impacted by Uber with the purpose of creating a more informed policy-making regarding mobility in NYC. 
 
 Using MapReduce to analyze Taxi and Uber data from Nyc.
 [Taxi data source](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
@@ -30,10 +32,11 @@ Taxi rides
 - Data was uploaded to an S3 bucket: s3://hectorsalvador-spr16-cs123-uchicago-edu/yellow
 
 ### 1. Counting taxi rides by event
-- We counted how many taxi rides occurred in a three-hour frame since the beginning of each event (as marked by the API). Running one month file with 20 instances on AWS takes about 24 minutes (e.g. using python3 ~/…/map_taxi_events.py -r emr s3://…/yellow_tripdata_2013-03.csv )
+- We counted how many taxi rides occurred in a three-hour frame since the beginning of each event (as marked by the API), at a distance no greater than 200 meters from the venue coordinates. 
+- Running one month file with 20 instances on AWS takes about 24 minutes (e.g. using python3 ~/…/map_taxi_events.py -r emr s3://…/yellow_tripdata_2013-03.csv )
 
 ### 2. Comparing taxi demand before and after Uber started operations in NYC
-- Results were later analyzed 
+- Results were separately analyzed using a spreadsheet. We divided total counts by total capacity of venues (in the case of Madison Square Garden) to compare before and after Uber operations.
 
 ## Task B: Destination likelihood
 

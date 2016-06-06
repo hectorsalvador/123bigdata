@@ -2,9 +2,7 @@
 
 Objective: Understand the taxi transportation dynamics for New York City (NYC) and how has it been impacted by Uber with the purpose of creating a more informed policy-making regarding mobility in NYC. 
 
-Using MapReduce to analyze Taxi and Uber data from Nyc.
-[Taxi data source](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml)
-[Uber data source](https://github.com/fivethirtyeight/uber-tlc-foil-response)
+Using MapReduce to analyze [Taxi](http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml) and [Uber](https://github.com/fivethirtyeight/uber-tlc-foil-response) data from NYC.
 
 ## Dependencies:
 - Python 2.7

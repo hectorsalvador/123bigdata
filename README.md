@@ -6,18 +6,19 @@
 
 Concerts
 - We obtained a database of 325 concerts in NYC, ranging from 2009 to 2015, using the Bandsintown API: http://www.bandsintown.com/api/overview
-- We had to manually verify coordinates of several venues, as they had some defaults that did not match any known venue
+- We manually verified coordinates of several venues, as they had some defaults that did not match any known venue
 - We used “get_bands.py” to get the information in a csv format and turned it into a json file
 
 Taxi rides
 - We downloaded two types of data: uber rides and yellow cab rides.
-- We took advantage of scripts written by github.com/toddwschneider/nyc-taxi-data to download monthly files of yellow cab rides, from 1/2009 to 12/2015. We also obtained monthly uber rides for the periods of 4/14-9/14 and 1/15 to 6/15.
+- We took advantage of scripts written by github.com/toddwschneider/nyc-taxi-data to download monthly files of yellow cab rides, from 1/2009 to 12/2015. We also obtained monthly uber rides for the period of 4/14-9/14.
 - Data was uploaded to an S3 bucket: s3://hectorsalvador-spr16-cs123-uchicago-edu/yellow
 
 ### 1. Counting taxi rides by event
 - We counted how many taxi rides occurred in a three-hour frame since the beginning of each event (as marked by the API). Running one month file with 20 instances on AWS takes about 24 minutes (e.g. using python3 ~/…/map_taxi_events.py -r emr s3://…/yellow_tripdata_2013-03.csv )
 
 ### 2. Comparing taxi demand before and after Uber started operations in NYC
+- Results were later analyzed 
 
 ## Task B: Destination likelihood
 

@@ -4,12 +4,14 @@ from datetime import datetime, timedelta
 from haversine import haversine
 import json
 
-#for taxis
+## Comment/Uncomment to use file with taxi and uber files
+
+# To use with taxi files
 # TAXI_DATE_COL = 1
 # TAXI_PICKUP_LAT_COL = 6
 # TAXI_PICKUP_LON_COL = 5
 
-#for ubers
+# To use with uber files
 UBER_DATE_COL = 0
 UBER_LAT_COL = 1
 UBER_LON_COL = 2
@@ -21,17 +23,12 @@ EVENTS_JSON = {"lady%20gaga @Radio City Music Hall, 2015-06-19T20:00:00": {"date
 def load_events(string_dict):
     '''
     Get information from the concert events.
-
     Takes:
-        -json_file, a string with the address of the json of events
+        -string_dict, a string with the address of the json of events
 
     Returns:
-        -events, a dictionary with event information preprocessed for use
-        od check_event
+        -events, a dictionary with event information preprocessed 
     '''
-    # with open(json_file) as df:
-    #     d = json.load(df)
-
     d = string_dict
     events = {}
 
@@ -47,8 +44,8 @@ EVENTS = load_events(EVENTS_JSON)
 
 def get_trip_info(line):
     '''
-    Get information from the yellow taxi rides.
-
+    Get information from the yellow taxi rides. Manually comment/uncomment time and date 
+    when processing ubers or taxis.
     Takes:
         -line, a line of a csv file 
 
@@ -107,8 +104,8 @@ class MRGetTripsDuringEvent(MRJob):
 
     def mapper_get_event_trips(self, _, line):
         '''
-        For each line in the csv, yield a pair with
-        visitor_name-status and visitee_name-status
+        For each line in the csv, yield a pair indicating the
+        event name and a count of one (1)
         '''
         date, pickup = get_trip_info(line)
         if date != None:
@@ -118,13 +115,13 @@ class MRGetTripsDuringEvent(MRJob):
 
     def combiner_event_trips(self, event, counts):
         '''
-        Combine to events
+        Combine to events, summing the counts
         '''
         yield (event, sum(counts))
 
     def reducer_event_trips(self, event, counts):
         '''
-        Reduce to events
+        Reduce to events, summing the counts
         '''
         yield (event, sum(counts))
 

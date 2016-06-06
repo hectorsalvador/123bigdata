@@ -20,7 +20,9 @@ DIR = "output/"
 
 
 def write_output(job, runner, fname):
-    print "strt writing output"
+    '''
+    Write output of final clusters to csv
+    '''
     with open(fname, "w") as f:
         writer = csv.writer(f)
         for line in runner.stream_output():
@@ -38,21 +40,13 @@ def extract_points(job, runner, fname):
         for line in runner.stream_output():
             key, value = job.parse_output_line(line)
             r = str(key)+","+str(value)
-            # print r
             writer.writerow(value)
-    # print "points are done"
 
-
-# def write_points_to_disk(points,fname):
-#     f = open(fname, "w")
-#     pickle.dump(points, f)
-#     f.close()
 
 def extract_centroids(job, runner):
     c = []
     for line in runner.stream_output():
         key, value = job.parse_output_line(line)
-        # print key, value
         c.append(value)
     return c
 
@@ -68,23 +62,19 @@ def get_biggest_diff(centroids,new_centroids):
 
 if __name__ == '__main__':
     times = ["weekday", "weeknight", "weekend"]
-    pickup_dropoff = ["pickup"]
-    # times = ["weekday"]
-    # pickup_dropoff = ["pickup"]
+    pickup_dropoff = ["pickup","dropoff"]
+
     for t in times:
         for p in pickup_dropoff:
             args = sys.argv[1:-1]
-            # k = sys.argv[2]
             init_file = sys.argv[-1]
             print init_file
             args.append("--time")
             args.append(t)
             args.append("--triptype")
             args.append(p)
-            # args.append(f)
             print "Starting clusters for %s %s" % (t,p)
-            # points_file = str(t)+str(p)+"_pts.csv"
-            # args1 = args.append(init_file)
+
             print args+[init_file]
             filter_points_job = MRInManhattan(args=args+[init_file])
 
@@ -111,12 +101,10 @@ if __name__ == '__main__':
                         write_centroids_to_disk(new_centroids, CENTROIDS_FILE)
 
                         diff = get_biggest_diff(centroids, new_centroids)
-                        print diff
                         if i < 10:
                             centroids = new_centroids
                         else:
-                            # output_file = DIR + str(t) + str(p) + ".csv"
-                            output_file = DIR + str(t) + str(p) + "_uber.csv"
+                            output_file = DIR + str(t) + str(p) + "_taxi.csv"
                             print "saving to %s" % output_file
                             write_output(update_centroids_job,update_centroids_runner,output_file)
                             break

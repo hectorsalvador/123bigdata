@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=640">
+
+    <link rel="stylesheet" href="stylesheets/core.css" media="screen">
+    <link rel="stylesheet" href="stylesheets/mobile.css" media="handheld, only screen and (max-device-width:640px)">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+
+    <script type="text/javascript" src="javascripts/modernizr.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/headsmart.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $('#main_content').headsmart()
+      })
+    </script>
+    <title>New York City Taxi Trips by hectorsalvador</title>
+  </head>
+
+  <body>
+    <a id="forkme_banner" href="https://github.com/hectorsalvador/123bigdata">View on GitHub</a>
+    <div class="shell">
+
+      <header>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <h1>New York City Taxi Trips</h1>
+            <h2>Analyzing New York City Taxi Data: a MapReduce approach</h2>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+      </header>
+
+      <section id="downloads">
+        <span class="inner">
+          <a href="https://github.com/hectorsalvador/123bigdata/zipball/master" class="zip"><em>download</em> .ZIP</a><a href="https://github.com/hectorsalvador/123bigdata/tarball/master" class="tgz"><em>download</em> .TGZ</a>
+        </span>
+      </section>
+
+
+      <span class="banner-fix"></span>
+
+
+      <section id="main_content">
+        <h1>
+<a id="analyzing-new-york-city-taxi-data-a-mapreduce-approach" class="anchor" href="#analyzing-new-york-city-taxi-data-a-mapreduce-approach" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Analyzing New York City Taxi Data: a MapReduce approach</h1>
+
+<hr>
+
+<h2>
+<a id="background-and-motivation-for-the-project" class="anchor" href="#background-and-motivation-for-the-project" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Background and motivation for the project</h2>
+
+<p>Lauren, Carlos, and I took recently a class on Big Data. We thought that a cool project -involving tons of data- would be to analyze the transport demand in New York City. Given the appearance of new transport options, such as Uber, we wanted to take a look at how these affect the available transport. Since we are interested in designing policies that benefit society, we wanted to have a first look on how much good these new options are doing to the cities. </p>
+
+<p>In this project, we focused our attention on taxi rides. We used publicly available data on <a href="http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml">yellow cabs</a> and a FOIL request by <a href="https://github.com/fivethirtyeight/uber-tlc-foil-response">FiveThirtyEight</a> for the Uber trips.</p>
+
+<h2>
+<a id="objectives" class="anchor" href="#objectives" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Objectives</h2>
+
+<ul>
+<li>First, understand the taxi transportation dynamics for New York City (NYC) and how has it been impacted by Uber with the purpose of creating a more informed policy-making regarding mobility in NYC. </li>
+<li>Second, use MapReduce to analyze <a href="http://www.nyc.gov/html/tlc/html/about/trip_record_data.shtml">Taxi</a> and <a href="https://github.com/fivethirtyeight/uber-tlc-foil-response">Uber</a> data from NYC.</li>
+</ul>
+
+<hr>
+
+<h3>
+<a id="has-uber-affected-yellow-taxi-demand-after-big-concerts-in-new-york-city" class="anchor" href="#has-uber-affected-yellow-taxi-demand-after-big-concerts-in-new-york-city" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Has Uber affected yellow taxi demand after big concerts in New York City?</h3>
+
+<p>We got data on NYC concerts for Billboard Top 100 artists using <a href="http://www.bandsintown.com/api/overview">Bandsintown API</a> and compared the volume of demand in taxi trips (as percentage of venue total capacity) before and after the establishment of Uber.</p>
+
+<p><img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide06.jpg" alt="Difference in taxi rides as a proportion of venue capacity in Madison Square Garden, 2010-2014"> 
+<img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide07.jpg" alt="Difference in taxi rides as a proportion of venue capacity in concert venues, 2010-2014"></p>
+
+<p>At Madison Square Garden, differences are rather small so it might be only the effect of picking more/less popular concerts on each year. We don’t know trends on taxi rides volume over time, so we might be looking at the trend effect. After this brief analysis, we concluded that we do not have enough concert venues to make statistical significance tests. We neither analyzed the taxi rides volume, so this could be part of our next steps.</p>
+
+<hr>
+
+<h3>
+<a id="what-are-travel-patterns-of-people-in-manhattan-at-different-days-weekdays-and-weekends-and-hours-day-and-night" class="anchor" href="#what-are-travel-patterns-of-people-in-manhattan-at-different-days-weekdays-and-weekends-and-hours-day-and-night" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>What are travel patterns of people in Manhattan at different days (weekdays and weekends) and hours (day and night)?</h3>
+
+<p>How likely is it for someone else to be taking a similar trip as you are at the same time?</p>
+
+<p>We took trips that started and ended in Manhattan within a specified time window (weekdays, weeknights, and weekends). For each type of trip, we ran an adapted K-Means algorithm (based on provided <a href="https://github.com/uchicago-cs/cmsc12300">code</a>) to generate clusters. We then analyzed the number of trips done between clusters, broken down by 30-min periods. This analysis was lengthy, so we drew a random sample to execute it.</p>
+
+<p>For most trips made between 6-7a on January weekdays, starting close to the Goldman Sachs Tower, Midtown, the Battery, or the nearby Wall Street was their destination.</p>
+
+<p><img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide12.jpg" alt="Likelihood to travel from cluster centered around Goldman Sachs Tower to other clusters, 6-7a, January 2015, weekdays"></p>
+
+<p>For trips made later in the evening 4-5p, Midtown was still a popular destination, but now Greenwich Village, Chelsea, and Downtown Manhattan were also popular destinations.</p>
+
+<p><img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide13.jpg" alt="Likelihood to travel from cluster centered around Goldman Sachs Tower to other clusters, 4-5p, January 2015, weekdays"></p>
+
+<p>At 6pm, 11% of the rides made from Wall Street go to the Lower East Side, while at 6am it's only 3%. How is the current public transport attending these temporal demands?</p>
+
+<p><img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide14.jpg" alt="Total trips from cluster centered around Wall Street to cluster centered in the Lower East Side"></p>
+
+<p>During January 2015, it was much more likely that Ubers were called in Downtown Manhattan when compared to Midtown and Upper East and West Side. Why was this? Were there less Ubers in Midtown/UES/UWS? Were there not enough cabs Downtown so Uber had to cover excess demand? Is people more inclined to use technology-based apps in Downtown Manhattan?</p>
+
+<p><img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide15.jpg" alt="Uber/Taxi proportion across different clusters"></p>
+
+<p>Most trips are made between 8a-10p; with a clear peak at 6p. While taxi demand is relatively flat, Uber demand significantly increases from 2-8p. Are uber drivers more likely to drive at these hours? Does the shift change for taxis at 6p make it particularly busy for Ubers? Why are there less Uber trips in the morning?</p>
+
+<p><img src="https://raw.githubusercontent.com/hectorsalvador/123bigdata/master/pictures/Slide16.jpg" alt="Histogram of taxi/Uber trips during weekdays"></p>
+
+<hr>
+
+<h3>
+<a id="policy-implications" class="anchor" href="#policy-implications" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Policy Implications</h3>
+
+<p>While we made a simple exploratory analysis on the transport in NYC, several interesting questions were raised:</p>
+
+<ul>
+<li>If there is no apparent change in taxi ride volumes after Uber entered the market, is Uber really competing against taxis? Or is it taking demand away from other methods of transport?</li>
+<li>Is available public transportation covering demand between areas with a high volume of trips?</li>
+<li>How do we design better routes for public transportation, adapting to traffic patterns at different times of the day?</li>
+</ul>
+
+<hr>
+
+<p>We would love to have more time to explore these questions, but classes are still keeping us busy! Feel free to use everything we have on our repository to do analysis of your own. We used this <a href="https://github.com/toddwschneider/nyc-taxi-data">repo</a> as our own starting point.</p>
+
+<p>Happy hacking!</p>
+
+<ul>
+<li>
+<a href="https://github.com/ladyson">Lauren</a>, <a href="https://github.com/cgrandet">Carlos</a>, and <a href="https://github.com/hectorsalvador">Héctor</a>
+</li>
+</ul>
+      </section>
+
+      <footer>
+        <span class="ribbon-outer">
+          <span class="ribbon-inner">
+            <p>this project by <a href="https://github.com/hectorsalvador">hectorsalvador</a> can be found on <a href="https://github.com/hectorsalvador/123bigdata">GitHub</a></p>
+          </span>
+          <span class="left-tail"></span>
+          <span class="right-tail"></span>
+        </span>
+        <p>Generated with <a href="https://pages.github.com">GitHub Pages</a> using Merlot</p>
+        <span class="octocat"></span>
+      </footer>
+
+    </div>
+
+    
+  </body>
+</html>
